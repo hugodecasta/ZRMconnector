@@ -1,5 +1,6 @@
 const credentials = require('./credentials_api')
-const { getStorageHost, docs, updateStatus, uploadRequest, deleteItem } = require('remarkable-tablet-api')
+const { authenticateDevice, authenticateUser, getStorageHost, docs, updateStatus, uploadRequest, deleteItem }
+    = require('remarkable-tablet-api')
 const AdmZip = require('adm-zip');
 const fetch = require('node-fetch')
 
@@ -39,8 +40,32 @@ class REMARKABLE_API {
         this.paths = null
     }
 
-    async path_exists(path) {
+    async get_dirs() {
+        if (this.dirs) return this.dirs
+        let collections = await docs(await this.rmhost(), await this.rmcode())
+        this.dirs = Object.fromEntries(collections
+            .map(({ ID, VissibleName, Parent }) => [ID, { ID, VissibleName, Parent }])
+        )
+        let paths = {}
+        let find_path = (collection) => {
+            if (!collection) return 'trash'
+            if (collection.ID in paths) return paths[collection.ID]
+            if (!collection.Parent) return paths[collection.ID] = '/' + collection.VissibleName
+            return paths[collection.ID] = find_path(this.dirs[collection.Parent]) + '/' + collection.VissibleName
+        }
+        for (let ID in this.dirs) {
+            this.dirs[ID].path = find_path(this.dirs[ID])
+        }
+        return this.dirs
+    }
 
+    async get_dir_id(dir) {
+        if (dir == 'trash') return 'trash'
+        return (await this.get_paths())[dir]
+    }
+
+    async path_exists(path) {
+        return (await this.get_dir_id(path)) != undefined
     }
 
     async set_status(ID, Parent, Name, Version, Type) {
@@ -65,68 +90,30 @@ class REMARKABLE_API {
         await fetch(uploadUrl, {
             method: 'PUT', body: get_buffer(docId),
             headers: {
-                Authorization: `Bearer ${userToken}`,
+                Authorization: `Bearer ${await this.rmcode()}`,
             },
         });
-        return await this.set_status(docId, dir_id, dir_name, 1, type)
+        return await this.set_status(docId, dir_id, name, 1, type)
     }
 
     // ----------------------------------------- ACTIONS
-
-    async get_dirs() {
-        if (this.dirs) return this.dirs
-        const api = await doc_api()
-        let collections = api//.filter(({ Type }) => Type == 'CollectionType')
-        dirs = Object.fromEntries(collections
-            .map(({ ID, VissibleName, Parent }) => [ID, { ID, VissibleName, Parent }])
-        )
-        let paths = {}
-        function find_path(collection) {
-            if (!collection) return 'trash'
-            if (collection.ID in paths) return paths[collection.ID]
-            if (!collection.Parent) return paths[collection.ID] = '/' + collection.VissibleName
-            return paths[collection.ID] = find_path(dirs[collection.Parent]) + '/' + collection.VissibleName
-        }
-        for (let ID in dirs) {
-            dirs[ID].path = find_path(dirs[ID])
-        }
-        return dirs
-    }
-
-    async get_paths() {
-        if (paths) return paths
-        let dirs = await get_dirs()
-        return paths = Object.fromEntries(Object.entries(dirs).map(([ID, { path }]) => [path, ID]))
-    }
-
-    async get_dir_id(dir) {
-        if (dir == 'trash') return 'trash'
-        return (await get_paths())[dir]
-    }
-
-    async get_doc(doc_id) {
-        return (await docs(await get_storage_host(), userToken, { id: doc_id }))[0]
-    }
-
-    async dir_exists(dir) {
-        return (await get_dir_id(dir)) != undefined
-    }
-
-    async get_dir_content(dir) {
-        return Object.fromEntries(Object.entries(await get_paths()).filter(([path]) => path.includes(dir) && path != dir))
-    }
 
     // ---------------------------- GET
     async get_paths() {
         if (this.paths) return this.paths
         let dirs = await this.get_dirs()
-        return paths = Object.fromEntries(Object.entries(dirs).map(([ID, { path }]) => [path, ID]))
+        return this.paths = Object.fromEntries(Object.entries(dirs).map(([ID, { path }]) => [path, ID]))
     }
     async get_path_content(dir) {
-        return Object.fromEntries(Object.entries(await get_paths()).filter(([path]) => path.includes(dir) && path != dir))
+        return Object.fromEntries(Object.entries(await this.get_paths()).filter(([path]) => path.includes(dir) && path != dir))
+    }
+    async get_path_content_direct(dir) {
+        return Object.fromEntries(Object.entries(await this.get_paths())
+            .filter(([path]) => path.includes(dir) && path != dir && path.replace(dir + '/', '').split('/').length == 1)
+        )
     }
     async get_document(doc_id) {
-
+        return (await docs(await this.rmhost(), await this.rmcode(), { id: doc_id }))[0]
     }
 
     // ---------------------------- CREATE
@@ -171,7 +158,5 @@ class REMARKABLE_API {
     }
 
 }
-
-// create_dir, push_pdf, get_paths, get_dir_content, delete_doc, move, reset_dirs
 
 module.exports = REMARKABLE_API

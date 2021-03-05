@@ -1,6 +1,7 @@
 // -------------------------------------------------------- REQUIRES
 
 const fs = require('fs')
+const CONNECTOR = require('./connector')
 
 // -------------------------------------------------------- DATA
 
@@ -9,7 +10,8 @@ const connectors = Object.freeze(JSON.parse(fs.readFileSync('./connectors.json')
 // -------------------------------------------------------- METHODS
 
 async function launch_connector(name, config) {
-    config.name = name
+    let conn = new CONNECTOR(name, config)
+    await conn.launch()
 }
 
 // -------------------------------------------------------- MAIN
