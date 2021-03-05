@@ -13,5 +13,20 @@
             "hugo - reading": "reading",
             "hugo - done": "done"
         }
+    },
+    "these": {
+        "remarkable_dir": "/These/Articles",
+        "remarkable_archive_dir": "trash",
+        "zotero_path": [
+            {
+                "type": "collection",
+                "name": "these"
+            }
+        ],
+        "tags": {
+            "toread": "to read",
+            "reading": "reading",
+            "done": "done"
+        }
     }
 }

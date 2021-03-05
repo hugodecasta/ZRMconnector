@@ -1,6 +1,6 @@
 {
   "name": "zrmconnector",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Zotero / ReMarkable connector",
   "main": "index.js",
   "scripts": {
@@ -26,9 +26,12 @@
     "adm-zip": "^0.5.3",
     "async-get-file": "^1.0.4",
     "jsdom": "^16.4.0",
+    "log-to-file": "^2.0.2",
     "node-fetch": "^2.6.1",
     "readline": "^1.3.0",
     "remarkable-tablet-api": "^1.0.0",
+    "ws": "^7.4.3",
+    "zotero": "^0.4.1",
     "zotero-api-client": "^0.34.2"
   }
 }

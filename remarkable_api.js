@@ -3,6 +3,7 @@ const { authenticateDevice, authenticateUser, getStorageHost, docs, updateStatus
     = require('remarkable-tablet-api')
 const AdmZip = require('adm-zip');
 const fetch = require('node-fetch')
+const WebSocket = require('ws')
 
 class REMARKABLE_API {
 
@@ -31,6 +32,37 @@ class REMARKABLE_API {
     async rmhost() {
         if (!this.rm_host) this.rm_host = await getStorageHost()
         return this.rm_host
+    }
+
+    // ----------------------------------------- UPDATE API
+
+    async init_remarkable_websocket() {
+        if (!this.remarkable_websocket) {
+            this.websocket_actions = []
+            let service_url = 'https://service-manager-production-dot-remarkable-production.appspot.com/service/json/1/'
+            let service = 'notifications'
+            let args = '?environment=production&group=auth0%7C5a68dc51cb30df1234567890&apiVer=1'
+            let url = service_url + service + args
+            let user_token = await this.remarkable_credentials()
+            let userAgent = 'remarkable-api'
+            let options = {
+                headers: {
+                    'User-Agent': userAgent,
+                    Authorization: `Bearer ${user_token}`,
+                }
+            }
+            let host = (await (await fetch(url, options)).json()).Host
+            let full_url = 'wss://' + host + '/notifications/ws/json/1'
+            const ws = new WebSocket(full_url, options);
+            ws.on('message', (data) => {
+                this.websocket_actions.forEach(action => action(data))
+            });
+        }
+    }
+
+    async register_func_change(func) {
+        await this.init_remarkable_websocket()
+        this.websocket_actions.push(func)
     }
 
     // ----------------------------------------- UTILS
@@ -125,7 +157,7 @@ class REMARKABLE_API {
         })
     }
     async upload_pdf(dir, name, local_pdf_path) {
-        return await this.create_doc(dir, name, 'CollectionType', (docId) => {
+        return await this.create_doc(dir, name, 'DocumentType', (docId) => {
             const docZip = new AdmZip();
             const metadata = {
                 extraMetadata: {},

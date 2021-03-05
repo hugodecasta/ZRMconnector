@@ -1,4 +1,5 @@
 const credentials = require('./credentials_api')
+const MAIN_ZOTERO = require('zotero');
 
 class ZOTERO_API {
 
@@ -7,6 +8,7 @@ class ZOTERO_API {
     constructor() {
         this.zotero_root_endpoint = null
         this.current_endpoint = null
+        this.is_group = false
     }
 
     // ----------------------------------------- API ROOT
@@ -38,16 +40,36 @@ class ZOTERO_API {
         return this.current_endpoint
     }
 
+    // ----------------------------------------- UPDATE API
+
+    async init_zotero_stream() {
+        if (!this.zotero_stream) {
+            this.stream_actions = []
+            let apiKey = (await this.zotero_credentials()).key
+            this.zotero_stream = new MAIN_ZOTERO.Stream({ apiKey });
+            this.zotero_stream.on('topicUpdated', (data) => {
+                this.stream_actions.forEach(action => action(data))
+            });
+        }
+    }
+
+    async register_func_change(func) {
+        await this.init_zotero_stream()
+        this.stream_actions.push(func)
+    }
+
     // ----------------------------------------- GOTO
 
     async goto_root() {
+        this.is_group = false
         this.current_endpoint = await this.get_root_api()
     }
 
     async goto_group(group_name) {
         let groups = (await (await this.get_user_endpoint()).groups().get()).raw
         let id = groups.filter(({ data: { name: found_name } }) => found_name == group_name).pop().id
-        return this.current_endpoint = (await this.get_current_endpoint()).library('group', id)
+        this.current_endpoint = (await this.get_current_endpoint()).library('group', id)
+        this.is_group = true
     }
 
     async goto_collection(collection_name) {
@@ -59,15 +81,16 @@ class ZOTERO_API {
     // ----------------------------------------- ACTIONS
 
     async get_items() {
-        return (await (await this.get_current_endpoint()).items().get()).raw
+        let items = (await (await this.get_current_endpoint()).items().get())
+        return items.raw
     }
 
     async set_document(key, document) {
-        return await (await this.get_current_endpoint()).items([key]).put(document)
+        return await (await (this.is_group ? this.get_current_endpoint() : this.get_user_endpoint())).items([key]).put(document)
     }
 
     async get_document(key) {
-        return (await (await this.get_current_endpoint()).items([key]).get()).raw
+        return (await (await (this.is_group ? this.get_current_endpoint() : this.get_user_endpoint())).items([key]).get()).raw
     }
 
     async change_tags(key, del_tags, add_tags) {
