@@ -19,7 +19,7 @@ Install using
 git clone git@github.com:hugodecasta/ZRMconnector.git
 ```
 
-Setup the npm package and get into the repository
+Setup the npm packages and get into the repository
 ```bash
 npm i
 cd ZRMconnector
