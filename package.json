@@ -1,0 +1,34 @@
+{
+  "name": "zrmconnector",
+  "version": "0.1.0",
+  "description": "Zotero / ReMarkable connector",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hugodecasta/ZRMconnector.git"
+  },
+  "keywords": [
+    "Zotero",
+    "ReMarkable",
+    "connector",
+    "API"
+  ],
+  "author": "Hugo Castaneda",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hugodecasta/ZRMconnector/issues"
+  },
+  "homepage": "https://github.com/hugodecasta/ZRMconnector#readme",
+  "dependencies": {
+    "adm-zip": "^0.5.3",
+    "async-get-file": "^1.0.4",
+    "jsdom": "^16.4.0",
+    "node-fetch": "^2.6.1",
+    "readline": "^1.3.0",
+    "remarkable-tablet-api": "^1.0.0",
+    "zotero-api-client": "^0.34.2"
+  }
+}

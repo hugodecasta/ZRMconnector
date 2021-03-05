@@ -1,0 +1,17 @@
+{
+    "AIbstract": {
+        "remarkable_dir": "/AIbstract/Articles",
+        "remarkable_archive_dir": "trash",
+        "zotero_path": [
+            {
+                "type": "group",
+                "name": "AIbstract"
+            }
+        ],
+        "tags": {
+            "hugo - toread": "to read",
+            "hugo - reading": "reading",
+            "hugo - done": "done"
+        }
+    }
+}
