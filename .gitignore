@@ -4,9 +4,9 @@
 *junk*/*
 
 # data
-
 *data/
 *data/*
+connectors.json
 
 # Logs
 logs
