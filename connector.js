@@ -242,6 +242,9 @@ class CONNECTOR {
         if (!fs.existsSync(local_pdf_dir)) fs.mkdirSync(local_pdf_dir)
         if (!fs.existsSync(connector_states_dir)) fs.mkdirSync(connector_states_dir)
 
+        // ---- setup ReMarkable api
+        await this.rmapi.remarkable_credentials()
+
         // ---- setup remarkable
         this.log('preparing RM directory', this.remarkable_dir)
         await Promise.all(this.used_dirs.map(dir_name => this.rmapi.mkdir(this.remarkable_dir, dir_name)))

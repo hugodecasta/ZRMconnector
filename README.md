@@ -19,6 +19,12 @@ Install using
 git clone git@github.com:hugodecasta/ZRMconnector.git
 ```
 
+Setup the npm package and get into the repository
+```bash
+npm i
+cd ZRMconnector
+```
+
 ## Setup
 
 Setting up the ZRMc server is quite simple and quick:
@@ -29,9 +35,9 @@ Setting up the ZRMc server is quite simple and quick:
 
 ### Connectors
 
-A `connector.json` file is required in order for the ZRMc server to deliver its service.
+A `connectors.json` file is required in order for the ZRMc server to deliver its service.
 
-Create the `connector.json` file at the root of the repository.
+Create the `connectors.json` file at the root of the repository.
 
 Inside this file, one need to add each connector as a property as follows:
 

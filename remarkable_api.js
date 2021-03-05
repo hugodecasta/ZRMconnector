@@ -19,10 +19,16 @@ class REMARKABLE_API {
     async remarkable_credentials() {
         let user_token = credentials.get_credentials('remarkable')
         if (!user_token) {
-            let code = await credentials.ask_credentials('ReMarkable One Time Code')
-            const { token } = await authenticateDevice(code);
-            user_token = await authenticateUser(token);
-            credentials.set_credentials('remarkable', user_token)
+            try {
+                let code = await credentials.ask_credentials('ReMarkable One Time Code')
+                const { token } = await authenticateDevice(code);
+                user_token = await authenticateUser(token);
+                credentials.set_credentials('remarkable', user_token)
+
+            } catch (e) {
+                console.log('ReMarkable credentials Error')
+                throw e
+            }
         }
         return user_token
     }
