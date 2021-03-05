@@ -43,10 +43,10 @@ Inside this file, one need to add each connector as a property as follows:
 
 ```json
 {
-    "connector_1": [connector syntax see below],
-    "phd_connector": [connector syntax see below],
-    "my_company_conn": [connector syntax see below],
-    ...
+    "connector_1": [/*connector syntax see below*/],
+    "phd_connector": [/*connector syntax see below*/],
+    "my_company_conn": [/*connector syntax see below*/]
+    //...
 }
 ```
 
