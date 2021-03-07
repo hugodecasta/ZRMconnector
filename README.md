@@ -12,6 +12,10 @@ A PhD student wanting to easly access its reading papers on its ReMarkable can u
  - tag your article with relevant tag names (e.g. toread, reading, done)
  - create a **Connector** in which 
 
+## Demo video
+
+[![](https://img.youtube.com/vi/LV1IQmUHl_A/0.jpg)](https://www.youtube.com/watch?v=LV1IQmUHl_A)
+
 ## Install
 
 Install using 
