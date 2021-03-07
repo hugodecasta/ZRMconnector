@@ -95,6 +95,7 @@ class ZOTERO_API {
 
     async change_tags(key, del_tags, add_tags) {
         let article = await this.get_document(key)
+        if (!article?.data) return
         let tags = [...add_tags, ...article.data.tags.map(({ tag }) => tag).filter(tag => !del_tags.includes(tag))]
         article.data.tags = tags.map(tag => ({ tag }))
         return await this.set_document(key, article)
