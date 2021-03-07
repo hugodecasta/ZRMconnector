@@ -2,6 +2,7 @@
 
 const fs = require('fs')
 const CONNECTOR = require('./connector')
+const log = require('./logger')
 
 // -------------------------------------------------------- DATA
 
@@ -17,6 +18,7 @@ async function launch_connector(name, config) {
 // -------------------------------------------------------- MAIN
 
 async function main() {
-    Object.entries(connectors).map(([name, config]) => launch_connector(name, config))
+    log('SYSTEM', 'launch of ZRMc system v' + JSON.parse(fs.readFileSync('./package.json')).version)
+    for (let conn_name in connectors) await launch_connector(conn_name, connectors[conn_name])
 }
 main()

@@ -1,9 +1,8 @@
 const ZAPI = require('./zotero_api')
 const RMAPI = require('./remarkable_api')
-const util = require('util')
 const fs = require('fs')
 const download_paper = require('./download_paper_api')
-const log = require('log-to-file');
+const log = require('./logger')
 
 const local_pdf_dir = './pdfs_data'
 const connector_states_dir = './conn_states_data'
@@ -11,10 +10,7 @@ const connector_states_dir = './conn_states_data'
 process.connector_lock = false
 
 async function wait_immediate() {
-    return new Promise(ok => {
-        // setTimeout(ok, 100) // ---- DEBUG !!
-        setImmediate(ok)
-    })
+    return new Promise(ok => setImmediate(ok))
 }
 async function wait_for_lock() {
     while (process.connector_lock) await wait_immediate()
@@ -43,9 +39,9 @@ class CONNECTOR {
     }
 
     log() {
-        let str = 'CONN[' + this.name + ']::' + Array.from(arguments).map(arg => util.format(arg)).join(' ')
-        console.log(str)
-        log(str, 'logs.log');
+        let args = Array.from(arguments)
+        args.unshift('CONN:' + this.name)
+        log(...args)
     }
 
     // ----------------------------------------- UTILS
