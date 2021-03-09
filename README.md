@@ -86,7 +86,7 @@ the `zotero_path` property indicates the main library monitored by the system:
 
 the `tags` property indicated the tags and directory names associated respectivly with the Zotero account and the ReMarkable account. In this example, each article tagged `me - toread` will end up in the `/RM_Directory/to/the/articles/to read` folder in the ReMarkable
 
-### Launch
+## Launch
 
 Launch the ZRMc server using 
 ```bash
@@ -100,7 +100,7 @@ Once stated, the ZRMc server will ask for the following credentials (maybe not i
  - **Zotero API key** : found in the [Feeds/API](https://www.zotero.org/settings/keys) zotero panel (click "Create new private key" to create your API key)
  - **Zotero user_id** : found in the [Feeds/API](https://www.zotero.org/settings/keys) "Your userID for use in API calls is: XXXXXXX"
 
-### Usage
+## Usage
 
 The ZRMc server will download all tag-related article into the ReMarkable according to the connector settings.
 
@@ -109,3 +109,7 @@ Never put files in the tagged directories (might fail the ZRMc server)
 You can change the tags (will move the related ReMarkable articles automatically)
 
 You can move the articles from tagged-directory to tagged-directory in the ReMarkable (will retag or untag the related articles in Zotero automatically)
+
+## Limitations
+
+The ReMarkable cloud sync systems is not stable at this moment. Consequently, every change in the cloud initiated by the system will take effect on the ReMarkable tablet only if the tablet is opened and in realtime syncing mode. All changes applyed in the cloud while the tablet is sleeping or offline will not be synced once the tablet is awake again thus creating data inconsistency between the tablet and the cloud.

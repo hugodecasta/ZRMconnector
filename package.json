@@ -1,6 +1,6 @@
 {
   "name": "zrmconnector",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Zotero / ReMarkable connector",
   "main": "index.js",
   "scripts": {
