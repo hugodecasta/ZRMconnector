@@ -16,21 +16,33 @@ class REMARKABLE_API {
 
     // ----------------------------------------- API ROOT
 
-    async remarkable_credentials() {
-        let user_token = credentials.get_credentials('remarkable')
-        if (!user_token) {
+    async remarkable_credentials(force = false) {
+        let rm_creds = credentials.get_credentials('remarkable')
+        if (!rm_creds) {
             try {
                 let code = await credentials.ask_credentials('ReMarkable One Time Code')
                 const { token } = await authenticateDevice(code);
-                user_token = await authenticateUser(token);
-                credentials.set_credentials('remarkable', user_token)
+                let user_token = await authenticateUser(token);
+                rm_creds = { token, user_token }
+                credentials.set_credentials('remarkable', rm_creds)
+
+            } catch (e) {
+                console.log('ReMarkable credentials Error')
+                throw e
+            }
+        } else if (force) {
+            try {
+                const { token } = rm_creds
+                let user_token = await authenticateUser(token);
+                rm_creds = { token, user_token }
+                credentials.set_credentials('remarkable', rm_creds)
 
             } catch (e) {
                 console.log('ReMarkable credentials Error')
                 throw e
             }
         }
-        return user_token
+        return rm_creds.user_token
     }
     async rmcode() {
         return await this.remarkable_credentials()
@@ -80,7 +92,14 @@ class REMARKABLE_API {
 
     async get_dirs() {
         if (this.dirs) return this.dirs
-        let collections = await docs(await this.rmhost(), await this.rmcode())
+        let collections = null
+        try {
+            collections = await docs(await this.rmhost(), await this.rmcode())
+        } catch (e) {
+            console.log('error on rm credentials, forcing re tokenize')
+            await this.remarkable_credentials(true)
+            collections = await docs(await this.rmhost(), await this.rmcode())
+        }
         this.dirs = Object.fromEntries(collections
             .map(({ ID, VissibleName, Parent }) => [ID, { ID, VissibleName, Parent }])
         )
