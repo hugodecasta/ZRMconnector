@@ -1,4 +1,4 @@
-# ZRMconnector
+# DISCONTINUED- ZRMconnector -DISCONTINUED
 Zotero / ReMarkable connector
 
 ## Principles
