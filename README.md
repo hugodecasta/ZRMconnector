@@ -1,5 +1,6 @@
 # DISCONTINUED- ZRMconnector -DISCONTINUED
 Zotero / ReMarkable connector
+This project is no longer supported by me.
 
 ## Principles
 
